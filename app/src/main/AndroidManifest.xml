@@ -11,9 +11,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ihm"
         tools:ignore="ExtraText">
+        <activity android:name=".CallActivity"></activity>
+        <activity android:name=".ReportActivity" />
+        <activity android:name=".ProfileActivity" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar" >
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
