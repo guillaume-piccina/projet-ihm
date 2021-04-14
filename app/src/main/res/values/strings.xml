@@ -1,3 +1,18 @@
 <resources>
-    <string name="app_name">ihm</string>
+    <string name="signalement">Signalement</string>
+    <string name="type_d_incident">Type d\'incident</string>
+    <string name="signalement_visible_pour">Signalement visible pour</string>
+    <string name="valider">Valider</string>
+    <string name="annuler">Annuler</string>
+    <string-array name="planets_array">
+        <item>Tout le monde</item>
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+    </string-array>
 </resources>

@@ -16,9 +16,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ihm"
         tools:ignore="ExtraText">
-        <activity android:name=".controller.CallActivity" />
-        <activity android:name=".controller.ReportActivity" />
-        <activity android:name=".controller.ProfileActivity" />
+        <activity
+            android:name=".controller.CallActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity
+            android:name=".controller.ReportActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".controller.ProfileActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
             android:name=".controller.MainActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
