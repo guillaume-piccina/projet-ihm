@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".MainActivity">
+    tools:context=".controller.MainActivity">
 
     <Button
         android:id="@+id/buttonReport"
@@ -24,8 +24,8 @@
         android:id="@+id/buttonCall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:background="#236B9A"
         android:text="appeler 18"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -33,21 +33,18 @@
 
     <Button
         android:id="@+id/buttonProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="90dp"
+        android:layout_height="83dp"
         android:background="@drawable/profile_icon_foreground"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="349dp"
-        android:layout_height="480dp"
-        android:layout_marginTop="96dp"
+    <org.osmdroid.views.MapView
+        android:id="@+id/map"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.483"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/map" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonProfile" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

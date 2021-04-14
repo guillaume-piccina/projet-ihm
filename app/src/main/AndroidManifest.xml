@@ -3,6 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="projet.ihm">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"  />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,11 +16,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ihm"
         tools:ignore="ExtraText">
-        <activity android:name=".CallActivity"></activity>
-        <activity android:name=".ReportActivity" />
-        <activity android:name=".ProfileActivity" />
+        <activity android:name=".controller.CallActivity" />
+        <activity android:name=".controller.ReportActivity" />
+        <activity android:name=".controller.ProfileActivity" />
         <activity
-            android:name=".MainActivity"
+            android:name=".controller.MainActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

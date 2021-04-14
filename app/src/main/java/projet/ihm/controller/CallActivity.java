@@ -1,8 +1,10 @@
-package projet.ihm;
+package projet.ihm.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import projet.ihm.R;
 
 public class CallActivity extends AppCompatActivity {
 

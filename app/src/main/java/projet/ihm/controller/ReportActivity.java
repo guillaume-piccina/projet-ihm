@@ -1,14 +1,16 @@
-package projet.ihm;
+package projet.ihm.controller;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
-public class ProfileActivity extends AppCompatActivity {
+import projet.ihm.R;
+
+public class ReportActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_report);
     }
 }
