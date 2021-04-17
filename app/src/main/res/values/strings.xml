@@ -4,6 +4,9 @@
     <string name="signalement_visible_pour">Signalement visible pour</string>
     <string name="valider">Valider</string>
     <string name="annuler">Annuler</string>
+    <string name="profil">Profil</string>
+    <string name="signaler">signaler</string>
+    <string name="appeler_18">appeler 18</string>
     <string-array name="planets_array">
         <item>Tout le monde</item>
         <item>Mercury</item>

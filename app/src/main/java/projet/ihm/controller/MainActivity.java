@@ -13,6 +13,8 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import projet.ihm.R;
+import projet.ihm.model.Incident;
+import projet.ihm.model.TypeIncident;
 
 public class MainActivity extends AppCompatActivity {
     private MapView map;
@@ -34,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         mapController.setZoom(18.0);
         GeoPoint startPoint = new GeoPoint(43.65020, 7.00517);
         mapController.setCenter(startPoint);
-
 
 
 
