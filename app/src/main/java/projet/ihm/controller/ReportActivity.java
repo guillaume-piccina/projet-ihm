@@ -19,7 +19,7 @@ import projet.ihm.R;
 public class ReportActivity extends AppCompatActivity {
     private RadioGroup firstRadioGroup;
     private RadioGroup secondRadioGroup;
-    int oldId;
+    private int oldId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,16 +27,9 @@ public class ReportActivity extends AppCompatActivity {
         setContentView(R.layout.activity_report);
 
 
-        (findViewById(R.id.buttonCancel)).setOnClickListener( click -> {
-            Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(intentSend);
-        });
-
-
+        // Sélection type incident
         firstRadioGroup = findViewById(R.id.radioGroupIncident1);
         secondRadioGroup = findViewById(R.id.radioGroupIncident2);
-
-
 
         firstRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -69,6 +62,7 @@ public class ReportActivity extends AppCompatActivity {
         });
 
 
+        // Sélection communauté
         Spinner spinner = findViewById(R.id.spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.planets_array, android.R.layout.simple_spinner_item);
@@ -77,6 +71,19 @@ public class ReportActivity extends AppCompatActivity {
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
 
+
+        // Bouton annuler
+        (findViewById(R.id.buttonCancel)).setOnClickListener( click -> {
+            Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intentSend);
+        });
+
+
+        // Bouton valider
+        (findViewById(R.id.buttonSubmit)).setOnClickListener( click -> {
+            Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intentSend);
+        });
 
     }
 }

@@ -1,4 +1,4 @@
-package projet.ihm.model;
+package projet.ihm.model.incident;
 
 import java.util.Date;
 
@@ -25,4 +25,11 @@ public class Incident {
         --numberLikes;
     }
 
+    public String getName() {
+        return type.getName();
+    }
+
+    public void setRelief(boolean relief) {
+        this.relief = relief;
+    }
 }

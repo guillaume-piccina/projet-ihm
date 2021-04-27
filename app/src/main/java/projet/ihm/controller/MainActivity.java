@@ -13,8 +13,6 @@ import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
 import projet.ihm.R;
-import projet.ihm.model.Incident;
-import projet.ihm.model.TypeIncident;
 
 public class MainActivity extends AppCompatActivity {
     private MapView map;
