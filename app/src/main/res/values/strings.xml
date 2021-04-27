@@ -8,6 +8,7 @@
     <string name="signaler">signaler</string>
     <string name="appeler_18">appeler 18</string>
     <string name="description_incident_optionnel">Description incident (optionnel)</string>
+    <string name="placeName" />
     <string-array name="planets_array">
         <item>Tout le monde</item>
         <item>Mercury</item>
