@@ -9,9 +9,11 @@ public enum TypeIncident {
     POLICE("Police"),
     POTHOLE("Nid de poule");
 
-    private String name;
+    private final String name;
 
-    TypeIncident(String name) {}
+    TypeIncident(String name) {
+        this.name = name;
+    }
 
     public String getName() {
         return name;

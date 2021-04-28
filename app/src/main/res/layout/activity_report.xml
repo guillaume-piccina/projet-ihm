@@ -132,6 +132,7 @@
 
         <RadioButton
             android:id="@+id/radioButtonAccident"
+            android:tag="accident"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="15dp"
@@ -140,6 +141,7 @@
 
         <RadioButton
             android:id="@+id/radioButtonDanger"
+            android:tag="danger"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="15dp"
@@ -148,6 +150,7 @@
 
         <RadioButton
             android:id="@+id/radioButtonRoadClosed"
+            android:tag="roadClosed"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="15dp"
@@ -156,6 +159,7 @@
 
         <RadioButton
             android:id="@+id/radioButtonPothole"
+            android:tag="pothole"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="15dp"
@@ -176,6 +180,7 @@
 
         <RadioButton
             android:id="@+id/radioButtonTrafficJam"
+            android:tag="trafficJam"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="15dp"
@@ -184,6 +189,7 @@
 
         <RadioButton
             android:id="@+id/radioButtonWorksite"
+            android:tag="worksite"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="15dp"
@@ -192,6 +198,7 @@
 
         <RadioButton
             android:id="@+id/radioButtonPolice"
+            android:tag="police"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="15dp"
@@ -200,6 +207,7 @@
 
         <RadioButton
             android:id="@+id/radioButtonOther"
+            android:tag="other"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_margin="15dp"
