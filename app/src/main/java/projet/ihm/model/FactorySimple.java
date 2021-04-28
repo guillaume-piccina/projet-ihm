@@ -12,7 +12,7 @@ import projet.ihm.model.incident.Worksite;
 
 public class FactorySimple extends Factory {
     @Override
-    protected Incident buildIncident(TypeIncident typeIncident, String description) throws Throwable {
+    public Incident buildIncident(TypeIncident typeIncident, String description) throws Throwable {
         switch(typeIncident) {
             case ACCIDENT:
                 return new Accident(description);

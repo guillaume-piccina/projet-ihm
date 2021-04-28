@@ -5,5 +5,5 @@ import projet.ihm.model.incident.TypeIncident;
 
 public abstract class Factory {
 
-    protected abstract Incident buildIncident(TypeIncident typeIncident, String description) throws Throwable;
+    public abstract Incident buildIncident(TypeIncident typeIncident, String description) throws Throwable;
 }
