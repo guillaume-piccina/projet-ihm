@@ -24,6 +24,8 @@ import projet.ihm.model.FactorySimple;
 import projet.ihm.model.incident.Incident;
 import projet.ihm.model.incident.TypeIncident;
 
+import static projet.ihm.model.incident.Incident.INCIDENT;
+
 public class ReportActivity extends AppCompatActivity {
     private RadioGroup firstRadioGroup;
     private RadioGroup secondRadioGroup;
@@ -70,8 +72,6 @@ public class ReportActivity extends AppCompatActivity {
         });
 
 
-
-
         // Sélection communauté
         Spinner spinnerCommunity = findViewById(R.id.spinnerCommunity);
         spinnerCommunity.setAdapter(new ArrayAdapter<Community>(this, android.R.layout.simple_spinner_item, Community.values()));
@@ -84,10 +84,8 @@ public class ReportActivity extends AppCompatActivity {
         });
 
 
-
         // Bouton valider
         (findViewById(R.id.buttonSubmit)).setOnClickListener( click -> {
-            Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
 
             // Récupérer incident choisi
             int chkId1 = firstRadioGroup.getCheckedRadioButtonId();
@@ -125,30 +123,32 @@ public class ReportActivity extends AppCompatActivity {
                     break;
             }
 
-
             // Récupérer communauté choisie
             Community communitySelected = (Community) spinnerCommunity.getSelectedItem();
 
             // Récupérer description
             String description = ((EditText) findViewById(R.id.description)).getText().toString();
-            System.out.println(description);
 
             if (typeIncidentChecked != null) {
 
                 // Contruire l'objet Incident
+
                 Factory factory = new FactorySimple();
                 try {
                     Incident incident = factory.buildIncident(typeIncidentChecked, communitySelected, description);
+
+                    // Envoyer l'objet Incident à MainActivity
+                    Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
+                    intentSend.putExtra(INCIDENT, incident);
+                    startActivity(intentSend);
+
                 } catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
 
-                // Envoyer l'objet Incident à MainActivity
-
-                startActivity(intentSend);
-
             } else {
 
+                // Message d'erreur lorsque pas de type d'incident sélectionné
                 AlertDialog alertDialog = new AlertDialog.Builder(ReportActivity.this).create();
                 alertDialog.setTitle("Champ non rempli !");
                 alertDialog.setMessage("Vous devez obligatoirement sélectionner un type d'incident.");

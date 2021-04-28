@@ -8,6 +8,7 @@ import java.util.Date;
 import projet.ihm.model.Community;
 
 public class Incident implements Parcelable {
+    public static final String INCIDENT = "incident";
     private TypeIncident type;
     private String description;
     private Date date;
@@ -23,6 +24,7 @@ public class Incident implements Parcelable {
         this.numberLikes = 0;
         this.relief = false;
     }
+
 
     protected Incident(Parcel in) {
         description = in.readString();
@@ -42,18 +44,6 @@ public class Incident implements Parcelable {
         }
     };
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(description);
-        dest.writeInt(numberLikes);
-        dest.writeByte((byte) (relief ? 1 : 0));
-    }
-
     public void like() {
         ++numberLikes;
     }
@@ -68,5 +58,17 @@ public class Incident implements Parcelable {
 
     public void setRelief(boolean relief) {
         this.relief = relief;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(description);
+        dest.writeInt(numberLikes);
+        dest.writeByte((byte) (relief ? 1 : 0));
     }
 }
