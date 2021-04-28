@@ -8,14 +8,4 @@
     <string name="signaler">signaler</string>
     <string name="appeler_18">appeler 18</string>
     <string name="description_incident_optionnel">Description incident (optionnel)</string>
-    <string-array name="community">
-        <item>Tout le monde</item>
-        <item>Automobiliste</item>
-        <item>Motard</item>
-        <item>Camionneur</item>
-        <item>Cycliste</item>
-        <item>Policier</item>
-        <item>Ambulancier</item>
-        <item>Piéton</item>
-    </string-array>
 </resources>

@@ -15,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import projet.ihm.R;
+import projet.ihm.model.Community;
 import projet.ihm.model.Factory;
 import projet.ihm.model.FactorySimple;
 import projet.ihm.model.incident.Incident;
@@ -68,11 +69,12 @@ public class ReportActivity extends AppCompatActivity {
         // Sélection communauté
         Spinner spinner = findViewById(R.id.spinnerCommunity);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.community, android.R.layout.simple_spinner_item);
+        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.community, android.R.layout.simple_spinner_item);
+        spinner.setAdapter(new ArrayAdapter<Community>(this, android.R.layout.simple_spinner_item, Community.values()));
         // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        //spinner.setAdapter(adapter);
 
 
         // Bouton annuler
