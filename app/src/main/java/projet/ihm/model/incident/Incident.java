@@ -5,15 +5,19 @@ import android.os.Parcelable;
 
 import java.util.Date;
 
+import projet.ihm.model.Community;
+
 public class Incident implements Parcelable {
     private TypeIncident type;
     private String description;
     private Date date;
+    private Community community;
     private int numberLikes;
     private boolean relief;
 
-    public Incident(TypeIncident type, String description) {
+    public Incident(TypeIncident type, Community community, String description) {
         this.type = type;
+        this.community = community;
         this.description = description;
         this.date = new Date();
         this.numberLikes = 0;

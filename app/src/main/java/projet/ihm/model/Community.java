@@ -1,4 +1,13 @@
 package projet.ihm.model;
 
-public class Community {
+public enum Community {
+    EVERYBODY,
+    MOTORIST,
+    BIKER,
+    TRUCK_DRIVER,
+    CYCLIST,
+    POLICEMAN,
+    AMBULANCE_DRIVER,
+    PEDESTRIAN
+
 }
