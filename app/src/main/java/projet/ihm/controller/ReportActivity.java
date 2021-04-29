@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import projet.ihm.R;
 import projet.ihm.model.Community;
@@ -51,6 +52,8 @@ public class ReportActivity extends AppCompatActivity {
                     if (oldCheckedButton != null)
                         (findViewById(oldId)).setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
                     RadioButton checkedRadioButton = findViewById(checkedId);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Type d'incident choisi : " + checkedRadioButton.getTag(), Toast.LENGTH_SHORT);
+                    toast.show();
                     oldId = checkedId;
                     checkedRadioButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03A82F")));
                 }
@@ -65,6 +68,8 @@ public class ReportActivity extends AppCompatActivity {
                     if (oldCheckedButton != null)
                         (findViewById(oldId)).setBackgroundTintList(ColorStateList.valueOf(Color.BLACK));
                     RadioButton checkedRadioButton = findViewById(checkedId);
+                    Toast toast = Toast.makeText(getApplicationContext(), "Type d'incident choisi : " + checkedRadioButton.getTag(), Toast.LENGTH_SHORT);
+                    toast.show();
                     oldId = checkedId;
                     checkedRadioButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#03A82F")));
                 }
@@ -97,25 +102,25 @@ public class ReportActivity extends AppCompatActivity {
 
             TypeIncident typeIncidentChecked;
             switch(strIncident) {
-                case "accident":
+                case "Accident":
                     typeIncidentChecked = TypeIncident.ACCIDENT;
                     break;
-                case "danger":
+                case "Danger":
                     typeIncidentChecked = TypeIncident.DANGER;
                     break;
-                case "roadClosed":
+                case "Route fermée":
                     typeIncidentChecked = TypeIncident.ROAD_CLOSED;
                     break;
-                case "police":
+                case "Police":
                     typeIncidentChecked = TypeIncident.POLICE;
                     break;
-                case "trafficJam":
+                case "Trafic ralenti":
                     typeIncidentChecked = TypeIncident.TRAFFIC_JAM;
                     break;
-                case "pothole":
+                case "Nid de poule":
                     typeIncidentChecked = TypeIncident.POTHOLE;
                     break;
-                case "worksite":
+                case "Travaux":
                     typeIncidentChecked = TypeIncident.WORKSITE;
                     break;
                 default:
