@@ -74,6 +74,10 @@ public class Incident implements Parcelable {
         return community;
     }
 
+    public String getType() {
+        return type;
+    }
+
     public void setRelief(boolean relief) {
         this.relief = relief;
     }
