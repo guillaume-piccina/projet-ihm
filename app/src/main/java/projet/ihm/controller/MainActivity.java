@@ -28,6 +28,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import projet.ihm.R;
+import projet.ihm.model.Community;
+import projet.ihm.model.incident.Accident;
+import projet.ihm.model.incident.Incident;
+
+import static projet.ihm.model.incident.Incident.INCIDENT;
 
 public class MainActivity extends FragmentActivity implements IGPSActivity, OnMapReadyCallback {
     private static final String TAG = "GPS";
@@ -41,6 +46,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         setContentView(R.layout.activity_main);
 
 
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -51,7 +57,46 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
         }
 
-        // Vérifie la permission
+        // Met à jour la position
+        updatePosition();
+
+
+
+        // bouton profile
+        (findViewById(R.id.buttonProfile)).setOnClickListener( click -> {
+            Intent intentSend = new Intent( getApplicationContext(), ProfileActivity.class);
+            startActivity(intentSend);
+        });
+
+        // bouton signaler
+        (findViewById(R.id.buttonReport)).setOnClickListener( click -> {
+            Intent intentSend = new Intent( getApplicationContext(), ReportActivity.class);
+            startActivity(intentSend);
+        });
+
+        // bouton appeler
+        (findViewById(R.id.buttonCall)).setOnClickListener( click -> {
+            Intent intentSend = new Intent( getApplicationContext(), CallActivity.class);
+            startActivity(intentSend);
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updatePosition();
+
+
+        // Récupérer un incident et le placer sur la map à la localisation actuelle
+        Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
+
+        if (incidentReceived != null) {
+
+        }
+
+    }
+
+    public void updatePosition() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationListener listener = new LocationListener() {
                 @Override
@@ -84,26 +129,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             //GPS permission is still not GRANTED
             Log.d(TAG, "Permission NOT GRANTED  ! ");
         }
-
-
-        // bouton profile
-        (findViewById(R.id.buttonProfile)).setOnClickListener( click -> {
-            Intent intentSend = new Intent( getApplicationContext(), ProfileActivity.class);
-            startActivity(intentSend);
-        });
-
-        // bouton signaler
-        (findViewById(R.id.buttonReport)).setOnClickListener( click -> {
-            Intent intentSend = new Intent( getApplicationContext(), ReportActivity.class);
-            startActivity(intentSend);
-        });
-
-        // bouton appeler
-        (findViewById(R.id.buttonCall)).setOnClickListener( click -> {
-            Intent intentSend = new Intent( getApplicationContext(), CallActivity.class);
-            startActivity(intentSend);
-        });
-
     }
 
 
