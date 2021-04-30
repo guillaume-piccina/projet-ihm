@@ -133,6 +133,8 @@ public class ReportActivity extends AppCompatActivity {
 
             // Récupérer description
             String description = ((EditText) findViewById(R.id.description)).getText().toString();
+            if (description.equals(""))
+                description = "Pas de description.";
 
             if (typeIncidentChecked != null) {
 

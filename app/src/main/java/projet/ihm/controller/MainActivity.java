@@ -6,9 +6,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +25,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,6 +39,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
@@ -42,12 +50,14 @@ import projet.ihm.model.Community;
 import projet.ihm.model.incident.Accident;
 import projet.ihm.model.incident.Incident;
 
+import static java.security.AccessController.getContext;
 import static projet.ihm.model.incident.Incident.INCIDENT;
 
 public class MainActivity extends FragmentActivity implements IGPSActivity, OnMapReadyCallback {
     private static final String TAG = "GPS";
     private Location currentLocation;
     private GoogleMap mMap;
+    private View fragmentInfoIncident;
 
 
     @Override
@@ -67,8 +77,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
         }
 
-        // Met à jour la position et ajoute le nouvel incident
-        updatePosition();
 
 
         // bouton profile
@@ -88,7 +96,11 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             Intent intentSend = new Intent( getApplicationContext(), CallActivity.class);
             startActivity(intentSend);
         });
+
+
+
     }
+
 
     // Récupérer un incident et le placer sur la map à la localisation actuelle
     public void showIncidentReceived() {
@@ -122,11 +134,16 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
                     icon = R.drawable.ic_others;
                     break;
             }
-            mMap.addMarker(new MarkerOptions().icon(BitmapFromVector(getApplicationContext(), icon)).position(getPosition()).title(incidentReceived.getName()));
+            mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapFromVector(getApplicationContext(), icon))
+                    .position(getPosition())
+                    .title(incidentReceived.getName())
+                    .snippet("Description : " + incidentReceived.getDescription() + "\n\n" + incidentReceived.getDate()));
         }
     }
 
-    public boolean updatePosition() {
+
+    public void updatePosition() {
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationListener listener = new LocationListener() {
                 @Override
@@ -135,7 +152,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
                     // Marker de la localisation actuelle
                     mMap.addMarker(new MarkerOptions().position(getPosition()).title("Votre localisation"));
                     moveCamera();
-
+                    // Marker des incidents
                     showIncidentReceived();
                 }
 
@@ -156,12 +173,10 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             };
             LocationManager locationManager = (LocationManager) (this.getSystemService(LOCATION_SERVICE));
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1, listener);
-            return true;
 
         } else {
             //GPS permission is still not GRANTED
             Log.d(TAG, "Permission NOT GRANTED  ! ");
-            return true;
         }
     }
 
@@ -178,6 +193,43 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        // Met à jour la position et ajoute le nouvel incident
+        updatePosition();
+
+        // Customiser les infos du marker
+        if (mMap != null) {
+
+            mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Override
+                public View getInfoWindow(Marker marker) {
+                    return null;
+                }
+                @Override
+                public View getInfoContents(Marker marker) {
+                    if (!marker.getTitle().equals("Votre localisation")) {
+
+                        View infoWindowLayout  = getLayoutInflater().inflate(R.layout.fragment_info_incident, null);
+                        fragmentInfoIncident = infoWindowLayout.findViewById(R.id.infoIncident);
+                        ((TextView) fragmentInfoIncident.findViewById(R.id.title)).setText(marker.getTitle());
+                        ((TextView) fragmentInfoIncident.findViewById(R.id.description)).setText(marker.getSnippet());
+
+
+
+
+                        //android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        //transaction.add(fragmentInfoIncident.getId(), new Fragment(), "fragment_id");
+                        //transaction.commit();
+
+                        return fragmentInfoIncident;
+                    } else {
+                        return null;
+                    }
+                }
+            });
+
+        }
+
     }
 
     @Override
