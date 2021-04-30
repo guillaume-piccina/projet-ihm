@@ -73,7 +73,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
 
         // bouton profile
         (findViewById(R.id.buttonProfile)).setOnClickListener( click -> {
-            Intent intentSend = new Intent( getApplicationContext(), ProfileActivity.class);
+            Intent intentSend = new Intent( getApplicationContext(), ParametersActivity.class);
             startActivity(intentSend);
         });
 
