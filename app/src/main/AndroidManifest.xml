@@ -34,7 +34,7 @@
             android:name=".controller.ReportActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".controller.ProfileActivity"
+            android:name=".controller.ParametersActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".controller.MainActivity"
