@@ -1,6 +1,9 @@
 package projet.ihm.model;
 
-public enum DistanceNotif {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public enum DistanceNotif implements Parcelable {
     CLOSE("50 m", 50),
     MEDIUM("100 m", 100),
     FAR("1 km", 1000);
@@ -12,6 +15,34 @@ public enum DistanceNotif {
         this.distance=distance;
         this.name=name;
     }
+
+    DistanceNotif(Parcel in) {
+        name = in.readString();
+        distance = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(ordinal());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<DistanceNotif> CREATOR = new Creator<DistanceNotif>() {
+        @Override
+        public DistanceNotif createFromParcel(Parcel in) {
+            return DistanceNotif.values()[in.readInt()];
+        }
+
+        @Override
+        public DistanceNotif[] newArray(int size) {
+            return new DistanceNotif[size];
+        }
+    };
+
     @Override
     public String toString(){
         return name;

@@ -25,6 +25,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,10 +51,12 @@ import java.io.FileOutputStream;
 
 import projet.ihm.R;
 import projet.ihm.model.Community;
+import projet.ihm.model.Profile;
 import projet.ihm.model.incident.Accident;
 import projet.ihm.model.incident.Incident;
 
 import static java.security.AccessController.getContext;
+import static projet.ihm.model.Application.PROFILE;
 import static projet.ihm.model.incident.Incident.INCIDENT;
 
 public class MainActivity extends FragmentActivity implements IGPSActivity, OnMapReadyCallback {
@@ -61,6 +64,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     private Location currentLocation;
     private GoogleMap mMap;
     private View fragmentInfoIncident;
+    private Profile profile;
 
 
     // APPEL 18
@@ -72,6 +76,13 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (getIntent().getParcelableExtra(PROFILE)==null){
+            profile = new Profile();
+        }
+        else {
+            profile = getIntent().getParcelableExtra(PROFILE);
+        }
 
 
 
@@ -90,6 +101,8 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         // bouton profile
         (findViewById(R.id.buttonProfile)).setOnClickListener( click -> {
             Intent intentSend = new Intent( getApplicationContext(), ParametersActivity.class);
+            Log.v("errorMAIN",profile.getCOMMUNITY().toString() + "   " + profile.getDISTNOTIF().toString());
+            intentSend.putExtra( PROFILE , (Parcelable) profile);
             startActivity(intentSend);
         });
 
@@ -373,4 +386,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             }
         }
     }
+
+
 }
