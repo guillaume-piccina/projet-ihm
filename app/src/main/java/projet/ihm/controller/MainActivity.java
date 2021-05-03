@@ -82,13 +82,15 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        incidents = new ArrayList<>();
+
+        incidents = new ArrayList<Incident>();
 
         Intent intent = new Intent(MainActivity.this, MapService.class);
         startService(intent);
 
 
-        if (getIntent().getParcelableExtra(PROFILE)==null){
+
+        if (getIntent().getParcelableExtra(PROFILE)==null && this.profile==null){
             profile = new Profile();
         }
         else {
@@ -121,6 +123,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             Intent intentSend = new Intent( getApplicationContext(), ReportActivity.class);
             intentSend.putExtra(LATITUDE,currentLocation.getLatitude());
             intentSend.putExtra(LONGITUDE,currentLocation.getLongitude());
+            intentSend.putExtra(PROFILE, (Parcelable) profile);
             startActivity(intentSend);
         });
 
@@ -134,41 +137,44 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     // Récupérer un incident et le placer sur la map à la localisation actuelle
     public void showIncidentReceived() {
         Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
+
         if (incidentReceived != null) {
             incidents.add(incidentReceived);
             for (Incident incident : incidents) {
-                int icon;
-                switch (incident.getType()) {
-                    case "Accident":
-                        icon = R.drawable.ic_accident;
-                        break;
-                    case "Danger":
-                        icon = R.drawable.ic_danger;
-                        break;
-                    case "Route fermée":
-                        icon = R.drawable.ic_road_closed;
-                        break;
-                    case "Trafic ralenti":
-                        icon = R.drawable.ic_traffic_jam;
-                        break;
-                    case "Travaux":
-                        icon = R.drawable.ic_worksite;
-                        break;
-                    case "Police":
-                        icon = R.drawable.ic_police;
-                        break;
-                    case "Nid de poule":
-                        icon = R.drawable.ic_pothole;
-                        break;
-                    default:
-                        icon = R.drawable.ic_others;
-                        break;
+                if (incidentReceived.getCommunity().ordinal()==(this.profile.getCOMMUNITY().ordinal())  || this.profile.getCOMMUNITY().ordinal()==Community.EVERYBODY.ordinal()) {
+                    int icon;
+                    switch (incident.getType()) {
+                        case "Accident":
+                            icon = R.drawable.ic_accident;
+                            break;
+                        case "Danger":
+                            icon = R.drawable.ic_danger;
+                            break;
+                        case "Route fermée":
+                            icon = R.drawable.ic_road_closed;
+                            break;
+                        case "Trafic ralenti":
+                            icon = R.drawable.ic_traffic_jam;
+                            break;
+                        case "Travaux":
+                            icon = R.drawable.ic_worksite;
+                            break;
+                        case "Police":
+                            icon = R.drawable.ic_police;
+                            break;
+                        case "Nid de poule":
+                            icon = R.drawable.ic_pothole;
+                            break;
+                        default:
+                            icon = R.drawable.ic_others;
+                            break;
+                    }
+                    mMap.addMarker(new MarkerOptions()
+                            .icon(BitmapFromVector(getApplicationContext(), icon))
+                            .position(incident.getPositiontoLatLng())
+                            .title(incident.getName())
+                            .snippet("Description : " + incident.getDescription() + "\n\n" + incident.getDate()));
                 }
-                mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapFromVector(getApplicationContext(), icon))
-                        .position(incident.getPositiontoLatLng())
-                        .title(incident.getName())
-                        .snippet("Description : " + incident.getDescription() + "\n\n" + incident.getDate()));
             }
         }
     }
@@ -182,7 +188,9 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
                 public void onLocationChanged(Location location) {
                     currentLocation = location;
                     // Marker de la localisation actuelle
+
                     mMap.addMarker(new MarkerOptions().position(getPosition()).title("Votre localisation"));
+
                     moveCamera();
                     // Marker des incidents
                     showIncidentReceived();

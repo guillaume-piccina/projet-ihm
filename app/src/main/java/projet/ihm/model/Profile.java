@@ -11,7 +11,6 @@ public class Profile implements Parcelable {
     protected Profile(Parcel in) {
         COMMUNITY = Community.values()[in.readInt()];
         DISTNOTIF = DistanceNotif.values()[in.readInt()];
-
     }
 
     public Profile(){

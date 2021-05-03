@@ -16,14 +16,14 @@ public class Incident implements Parcelable {
     protected String type;
     protected String description;
     protected String date;
-    protected String community;
+    protected Community community;
     protected int numberLikes;
     protected boolean relief;
     protected Position position;
 
     public Incident(TypeIncident type, Community community, String description, Position position) {
         this.type = type.getName();
-        this.community = community.toString();
+        this.community = community;
         this.description = description;
         this.date = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new Date());
         this.numberLikes = 0;
@@ -36,7 +36,7 @@ public class Incident implements Parcelable {
         type = in.readString();
         description = in.readString();
         date = in.readString();
-        community = in.readString();
+        community = Community.values()[in.readInt()];
         numberLikes = in.readInt();
         relief = in.readByte() != 0;
         position = in.readParcelable(Position.class.getClassLoader());
@@ -76,7 +76,7 @@ public class Incident implements Parcelable {
         return this.date;
     }
 
-    public String getCommunity() {
+    public Community getCommunity() {
         return community;
     }
 
@@ -105,7 +105,7 @@ public class Incident implements Parcelable {
         dest.writeString(type);
         dest.writeString(description);
         dest.writeString(date);
-        dest.writeString(community);
+        dest.writeInt(community.ordinal());
         dest.writeInt(numberLikes);
         dest.writeByte((byte) (relief ? 1 : 0));
         dest.writeParcelable(position, flags);

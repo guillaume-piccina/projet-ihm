@@ -68,19 +68,6 @@ public class ParametersActivity extends AppCompatActivity {
             startActivity(intentSend);
         });
 
-        //Sélection distance Notification
-
-
-
-
-
-
-        //Sélection Communauté
-
-
-
-
-
 
     }
 

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -20,11 +21,13 @@ import projet.ihm.R;
 import projet.ihm.model.Community;
 import projet.ihm.model.Factory;
 import projet.ihm.model.FactorySimple;
+import projet.ihm.model.Profile;
 import projet.ihm.model.incident.Incident;
 import projet.ihm.model.incident.TypeIncident;
 
 import static projet.ihm.model.Application.LATITUDE;
 import static projet.ihm.model.Application.LONGITUDE;
+import static projet.ihm.model.Application.PROFILE;
 import static projet.ihm.model.incident.Incident.INCIDENT;
 
 public class ReportActivity extends AppCompatActivity {
@@ -38,6 +41,8 @@ public class ReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
         Position position = new Position(getIntent().getDoubleExtra(LONGITUDE,0),getIntent().getDoubleExtra(LATITUDE,0));
+        Profile profile = getIntent().getParcelableExtra(PROFILE);
+
 
         // Sélection type incident
         firstRadioGroup = findViewById(R.id.radioGroupIncident1);
@@ -85,6 +90,7 @@ public class ReportActivity extends AppCompatActivity {
         // Bouton annuler
         (findViewById(R.id.buttonCancel)).setOnClickListener( click -> {
             Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
+            intentSend.putExtra(PROFILE, (Parcelable) profile);
             startActivity(intentSend);
         });
 
@@ -147,6 +153,7 @@ public class ReportActivity extends AppCompatActivity {
                     // Envoyer l'objet Incident à MainActivity
                     Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
                     intentSend.putExtra(INCIDENT, incident);
+                    intentSend.putExtra(PROFILE, (Parcelable) profile);
                     startActivity(intentSend);
 
                 } catch (Throwable throwable) {
