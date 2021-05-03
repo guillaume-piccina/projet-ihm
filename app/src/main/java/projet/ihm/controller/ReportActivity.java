@@ -2,15 +2,12 @@ package projet.ihm.controller;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
-import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -18,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import projet.ihm.model.Position;
 import projet.ihm.R;
 import projet.ihm.model.Community;
 import projet.ihm.model.Factory;
@@ -25,6 +23,8 @@ import projet.ihm.model.FactorySimple;
 import projet.ihm.model.incident.Incident;
 import projet.ihm.model.incident.TypeIncident;
 
+import static projet.ihm.model.Application.LATITUDE;
+import static projet.ihm.model.Application.LONGITUDE;
 import static projet.ihm.model.incident.Incident.INCIDENT;
 
 public class ReportActivity extends AppCompatActivity {
@@ -37,7 +37,7 @@ public class ReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
-
+        Position position = new Position(getIntent().getDoubleExtra(LONGITUDE,0),getIntent().getDoubleExtra(LATITUDE,0));
 
         // Sélection type incident
         firstRadioGroup = findViewById(R.id.radioGroupIncident1);
@@ -142,7 +142,7 @@ public class ReportActivity extends AppCompatActivity {
 
                 Factory factory = new FactorySimple();
                 try {
-                    Incident incident = factory.buildIncident(typeIncidentChecked, communitySelected, description);
+                    Incident incident = factory.buildIncident(typeIncidentChecked, communitySelected, description, position);
 
                     // Envoyer l'objet Incident à MainActivity
                     Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);

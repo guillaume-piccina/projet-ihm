@@ -5,5 +5,5 @@ import projet.ihm.model.incident.TypeIncident;
 
 public abstract class Factory {
 
-    public abstract Incident buildIncident(TypeIncident typeIncident, Community community, String description) throws Throwable;
+    public abstract Incident buildIncident(TypeIncident typeIncident, Community community, String description, Position position) throws Throwable;
 }

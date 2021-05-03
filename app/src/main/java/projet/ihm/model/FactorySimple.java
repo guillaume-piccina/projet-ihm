@@ -12,22 +12,22 @@ import projet.ihm.model.incident.Worksite;
 
 public class FactorySimple extends Factory {
     @Override
-    public Incident buildIncident(TypeIncident typeIncident, Community community, String description) throws Throwable {
+    public Incident buildIncident(TypeIncident typeIncident, Community community, String description, Position position) throws Throwable {
         switch(typeIncident) {
             case ACCIDENT:
-                return new Accident(community, description);
+                return new Accident(community, description, position);
             case DANGER:
-                return new Danger(community, description);
+                return new Danger(community, description, position);
             case POLICE:
-                return new Police(community, description);
+                return new Police(community, description, position);
             case POTHOLE:
-                return new Pothole(community, description);
+                return new Pothole(community, description, position);
             case WORKSITE:
-                return new Worksite(community, description);
+                return new Worksite(community, description, position);
             case TRAFFIC_JAM:
-                return new TrafficJam(community, description);
+                return new TrafficJam(community, description, position);
             case ROAD_CLOSED:
-                return new RoadClosed(community, description);
+                return new RoadClosed(community, description, position);
             default:
                 throw new Throwable("incident not made");
         }

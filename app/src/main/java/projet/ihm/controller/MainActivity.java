@@ -56,6 +56,8 @@ import projet.ihm.model.incident.Accident;
 import projet.ihm.model.incident.Incident;
 
 import static java.security.AccessController.getContext;
+import static projet.ihm.model.Application.LATITUDE;
+import static projet.ihm.model.Application.LONGITUDE;
 import static projet.ihm.model.Application.PROFILE;
 import static projet.ihm.model.incident.Incident.INCIDENT;
 
@@ -109,6 +111,8 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         // bouton signaler
         (findViewById(R.id.buttonReport)).setOnClickListener( click -> {
             Intent intentSend = new Intent( getApplicationContext(), ReportActivity.class);
+            intentSend.putExtra(LATITUDE,currentLocation.getLatitude());
+            intentSend.putExtra(LONGITUDE,currentLocation.getLongitude());
             startActivity(intentSend);
         });
 
@@ -153,7 +157,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             }
             mMap.addMarker(new MarkerOptions()
                     .icon(BitmapFromVector(getApplicationContext(), icon))
-                    .position(getPosition())
+                    .position(incidentReceived.getPositiontoLatLng())
                     .title(incidentReceived.getName())
                     .snippet("Description : " + incidentReceived.getDescription() + "\n\n" + incidentReceived.getDate()));
         }
