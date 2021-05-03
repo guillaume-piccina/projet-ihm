@@ -48,6 +48,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 import projet.ihm.R;
 import projet.ihm.model.Community;
@@ -68,6 +69,8 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     private View fragmentInfoIncident;
     private Profile profile;
 
+    private ArrayList<Incident> incidents;
+
 
     // APPEL 18
     private static final int MY_PERMISSION_REQUEST_CODE_CALL_PHONE = 555;
@@ -79,13 +82,18 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        incidents = new ArrayList<>();
+
+        Intent intent = new Intent(MainActivity.this, MapService.class);
+        startService(intent);
+
+
         if (getIntent().getParcelableExtra(PROFILE)==null){
             profile = new Profile();
         }
         else {
             profile = getIntent().getParcelableExtra(PROFILE);
         }
-
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -126,42 +134,45 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     // Récupérer un incident et le placer sur la map à la localisation actuelle
     public void showIncidentReceived() {
         Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
-
         if (incidentReceived != null) {
-            int icon;
-            switch (incidentReceived.getType()) {
-                case "Accident":
-                    icon = R.drawable.ic_accident;
-                    break;
-                case "Danger":
-                    icon = R.drawable.ic_danger;
-                    break;
-                case "Route fermée":
-                    icon = R.drawable.ic_road_closed;
-                    break;
-                case "Trafic ralenti":
-                    icon = R.drawable.ic_traffic_jam;
-                    break;
-                case "Travaux":
-                    icon = R.drawable.ic_worksite;
-                    break;
-                case "Police":
-                    icon = R.drawable.ic_police;
-                    break;
-                case "Nid de poule":
-                    icon = R.drawable.ic_pothole;
-                    break;
-                default:
-                    icon = R.drawable.ic_others;
-                    break;
+            incidents.add(incidentReceived);
+            for (Incident incident : incidents) {
+                int icon;
+                switch (incident.getType()) {
+                    case "Accident":
+                        icon = R.drawable.ic_accident;
+                        break;
+                    case "Danger":
+                        icon = R.drawable.ic_danger;
+                        break;
+                    case "Route fermée":
+                        icon = R.drawable.ic_road_closed;
+                        break;
+                    case "Trafic ralenti":
+                        icon = R.drawable.ic_traffic_jam;
+                        break;
+                    case "Travaux":
+                        icon = R.drawable.ic_worksite;
+                        break;
+                    case "Police":
+                        icon = R.drawable.ic_police;
+                        break;
+                    case "Nid de poule":
+                        icon = R.drawable.ic_pothole;
+                        break;
+                    default:
+                        icon = R.drawable.ic_others;
+                        break;
+                }
+                mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapFromVector(getApplicationContext(), icon))
+                        .position(incident.getPositiontoLatLng())
+                        .title(incident.getName())
+                        .snippet("Description : " + incident.getDescription() + "\n\n" + incident.getDate()));
             }
-            mMap.addMarker(new MarkerOptions()
-                    .icon(BitmapFromVector(getApplicationContext(), icon))
-                    .position(incidentReceived.getPositiontoLatLng())
-                    .title(incidentReceived.getName())
-                    .snippet("Description : " + incidentReceived.getDescription() + "\n\n" + incidentReceived.getDate()));
         }
     }
+
 
 
     public void updatePosition() {
