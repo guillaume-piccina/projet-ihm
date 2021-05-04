@@ -29,6 +29,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -41,7 +43,11 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import projet.ihm.R;
 import projet.ihm.model.Community;
@@ -60,9 +66,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     private GoogleMap mMap;
     private View fragmentInfoIncident;
 
-    private ArrayList<Incident> incidents;
-
-
 
     // APPEL 18
     private static final int MY_PERMISSION_REQUEST_CODE_CALL_PHONE = 555;
@@ -74,9 +77,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-        incidents = new ArrayList<Incident>();
-
         Intent intent = new Intent(MainActivity.this, MapService.class);
         startService(intent);
 
@@ -85,16 +85,10 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
         // Demander la permission pour utiliser le GPS
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
         }
-
-
-
-
-
 
         // bouton profile
         (findViewById(R.id.buttonProfile)).setOnClickListener( click -> {
@@ -112,27 +106,50 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             askPermissionAndCall()
         );
 
-
         //Bouton Recentrer
         (findViewById(R.id.Recentrer)).setOnClickListener( click ->
                 moveCamera()
-                );
+        );
 
 
+        saveIncidentReceived();
+    }
+
+
+    public void saveIncidentReceived() {
+        Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
+        if (incidentReceived != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                //FileOutputStream fos = new FileOutputStream(new File("incidents"));
+                mapper.writeValue(new File("c:\\test\\staff.json"), incidentReceived);
+                System.out.println("---------------------------------------------------file created ");
+                System.out.println(System.getProperty("user.dir"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
 
 
-    // Récupérer un incident et le placer sur la map à la localisation actuelle
-    public void showIncidentReceived() {
+    // Placer tous les markers des incidents sur la map
+    public void showAllIncidents()  {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
 
-        if (incidentReceived != null) {
-            incidents.add(incidentReceived);
+        ObjectMapper mapper = new ObjectMapper();
+        TypeReference<List<Incident>> typeReference = new TypeReference<List<Incident>>() {};
+        Incident[] incidents = null;
+        try {
+            FileOutputStream fos = new FileOutputStream(new File(getFilesDir(), "incidents"));
+            incidents = mapper.readValue(String.valueOf(fos), Incident[].class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (incidents != null) {
             for (Incident incident : incidents) {
-                if (preferences.getString(COMMUNITY, "Tout le monde").equals(incidentReceived.getCommunity().toString())) {
+                if (preferences.getString(COMMUNITY, "Tout le monde").equals(incident.getCommunity().toString())) {
                     int icon;
                     switch (incident.getType()) {
                         case "Accident":
@@ -183,8 +200,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
                     mMap.addMarker(new MarkerOptions().position(getPosition()).title("Votre localisation"));
 
                     moveCamera();
-                    // Marker des incidents
-                    showIncidentReceived();
 
                     sendIncidentNotification();
                 }
