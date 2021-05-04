@@ -6,7 +6,7 @@ import android.os.Parcelable;
 public enum DistanceNotif implements Parcelable {
     CLOSE("50 m", 50),
     MEDIUM("100 m", 100),
-    FAR("1 km", 1000);
+    FAR("1000 m", 1000);
 
     private String name;
     private int distance;
@@ -50,5 +50,9 @@ public enum DistanceNotif implements Parcelable {
 
     public String getName(){
         return this.name;
+    }
+
+    public int getDistance() {
+        return distance;
     }
 }

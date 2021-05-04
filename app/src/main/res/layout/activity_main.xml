@@ -11,7 +11,8 @@
         android:id="@+id/infoIncident"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="projet.ihm.controller.FragmentInfoIncident" />
+        android:name="projet.ihm.controller.FragmentInfoIncident"
+        tools:layout="@layout/fragment_info_incident" />
 
     <fragment
         android:id="@+id/map"
@@ -52,10 +53,10 @@
 
     <Button
         android:id="@+id/buttonProfile"
-        android:layout_width="73dp"
-        android:layout_height="64dp"
+        android:layout_width="52dp"
+        android:layout_height="51dp"
         android:layout_marginTop="16dp"
-        android:layout_marginRight="12dp"
+        android:layout_marginEnd="12dp"
         android:background="@drawable/parameters"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

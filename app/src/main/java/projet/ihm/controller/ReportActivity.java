@@ -21,7 +21,6 @@ import projet.ihm.R;
 import projet.ihm.model.Community;
 import projet.ihm.model.Factory;
 import projet.ihm.model.FactorySimple;
-import projet.ihm.model.Profile;
 import projet.ihm.model.incident.Incident;
 import projet.ihm.model.incident.TypeIncident;
 
@@ -41,7 +40,6 @@ public class ReportActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
         Position position = new Position(getIntent().getDoubleExtra(LONGITUDE,0),getIntent().getDoubleExtra(LATITUDE,0));
-        Profile profile = getIntent().getParcelableExtra(PROFILE);
 
 
         // Sélection type incident
@@ -84,13 +82,12 @@ public class ReportActivity extends AppCompatActivity {
 
         // Sélection communauté
         Spinner spinnerCommunity = findViewById(R.id.spinnerCommunity);
-        spinnerCommunity.setAdapter(new ArrayAdapter<Community>(this, android.R.layout.simple_spinner_item, Community.values()));
+        spinnerCommunity.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, Community.values()));
 
 
         // Bouton annuler
         (findViewById(R.id.buttonCancel)).setOnClickListener( click -> {
             Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
-            intentSend.putExtra(PROFILE, (Parcelable) profile);
             startActivity(intentSend);
         });
 
@@ -153,7 +150,6 @@ public class ReportActivity extends AppCompatActivity {
                     // Envoyer l'objet Incident à MainActivity
                     Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
                     intentSend.putExtra(INCIDENT, incident);
-                    intentSend.putExtra(PROFILE, (Parcelable) profile);
                     startActivity(intentSend);
 
                 } catch (Throwable throwable) {

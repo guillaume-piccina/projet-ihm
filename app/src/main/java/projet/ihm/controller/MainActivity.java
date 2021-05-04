@@ -6,19 +6,16 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -26,13 +23,9 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,21 +35,20 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import projet.ihm.R;
 import projet.ihm.model.Community;
-import projet.ihm.model.Profile;
-import projet.ihm.model.incident.Accident;
 import projet.ihm.model.incident.Incident;
 
-import static java.security.AccessController.getContext;
+import static projet.ihm.controller.ParametersActivity.COMMUNITY;
+import static projet.ihm.controller.ParametersActivity.DISTANCE;
 import static projet.ihm.model.Application.LATITUDE;
 import static projet.ihm.model.Application.LONGITUDE;
 import static projet.ihm.model.Application.PROFILE;
@@ -67,7 +59,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     private Location currentLocation;
     private GoogleMap mMap;
     private View fragmentInfoIncident;
-    private Profile profile;
 
     private ArrayList<Incident> incidents;
 
@@ -89,15 +80,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         startService(intent);
 
 
-
-        if (getIntent().getParcelableExtra(PROFILE)==null && this.profile==null){
-            profile = new Profile();
-        }
-        else {
-            profile = getIntent().getParcelableExtra(PROFILE);
-        }
-
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -110,20 +92,18 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
 
 
 
+
+
+
         // bouton profile
         (findViewById(R.id.buttonProfile)).setOnClickListener( click -> {
             Intent intentSend = new Intent( getApplicationContext(), ParametersActivity.class);
-            Log.v("errorMAIN",profile.getCOMMUNITY().toString() + "   " + profile.getDISTNOTIF().toString());
-            intentSend.putExtra( PROFILE , (Parcelable) profile);
             startActivity(intentSend);
         });
 
         // bouton signaler
         (findViewById(R.id.buttonReport)).setOnClickListener( click -> {
             Intent intentSend = new Intent( getApplicationContext(), ReportActivity.class);
-            intentSend.putExtra(LATITUDE,currentLocation.getLatitude());
-            intentSend.putExtra(LONGITUDE,currentLocation.getLongitude());
-            intentSend.putExtra(PROFILE, (Parcelable) profile);
             startActivity(intentSend);
         });
 
@@ -134,14 +114,17 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     }
 
 
+
+
     // Récupérer un incident et le placer sur la map à la localisation actuelle
     public void showIncidentReceived() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
 
         if (incidentReceived != null) {
             incidents.add(incidentReceived);
             for (Incident incident : incidents) {
-                if (incidentReceived.getCommunity().ordinal()==(this.profile.getCOMMUNITY().ordinal())  || this.profile.getCOMMUNITY().ordinal()==Community.EVERYBODY.ordinal()) {
+                if (preferences.getString(COMMUNITY, "Tout le monde").equals(incidentReceived.getCommunity().toString())) {
                     int icon;
                     switch (incident.getType()) {
                         case "Accident":
@@ -194,6 +177,8 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
                     moveCamera();
                     // Marker des incidents
                     showIncidentReceived();
+
+                    sendIncidentNotification();
                 }
 
                 @Override
@@ -253,14 +238,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
                         fragmentInfoIncident = infoWindowLayout.findViewById(R.id.infoIncident);
                         ((TextView) fragmentInfoIncident.findViewById(R.id.title)).setText(marker.getTitle());
                         ((TextView) fragmentInfoIncident.findViewById(R.id.description)).setText(marker.getSnippet());
-
-
-
-
-                        //android.app.FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                        //transaction.add(fragmentInfoIncident.getId(), new Fragment(), "fragment_id");
-                        //transaction.commit();
-
                         return fragmentInfoIncident;
                     } else {
                         return null;
@@ -410,5 +387,15 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         }
     }
 
+    // Envoie une notification quand un incident est dans la zone
+    public void sendIncidentNotification() {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int distance = Integer.parseInt(preferences.getString(DISTANCE, "50"));
+        mMap.addCircle(new CircleOptions()
+                .center(getPosition())
+                .radius(distance)
+                .strokeColor(Color.BLACK));
+
+    }
 
 }
