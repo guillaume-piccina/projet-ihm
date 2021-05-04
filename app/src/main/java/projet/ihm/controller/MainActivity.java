@@ -48,6 +48,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 import projet.ihm.R;
 import projet.ihm.model.Community;
@@ -68,6 +69,8 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     private View fragmentInfoIncident;
     private Profile profile;
 
+    private ArrayList<Incident> incidents;
+
 
 
     // APPEL 18
@@ -80,13 +83,20 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        incidents = new ArrayList<Incident>();
+
+        Intent intent = new Intent(MainActivity.this, MapService.class);
+        startService(intent);
+
+
+
         if (getIntent().getParcelableExtra(PROFILE)==null && this.profile==null){
             profile = new Profile();
         }
         else {
             profile = getIntent().getParcelableExtra(PROFILE);
         }
-
 
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -136,11 +146,12 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     public void showIncidentReceived() {
         Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
 
-
-            if (incidentReceived != null) {
+        if (incidentReceived != null) {
+            incidents.add(incidentReceived);
+            for (Incident incident : incidents) {
                 if (incidentReceived.getCommunity().ordinal()==(this.profile.getCOMMUNITY().ordinal())  || this.profile.getCOMMUNITY().ordinal()==Community.EVERYBODY.ordinal()) {
                     int icon;
-                    switch (incidentReceived.getType()) {
+                    switch (incident.getType()) {
                         case "Accident":
                             icon = R.drawable.ic_accident;
                             break;
@@ -151,7 +162,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
                             icon = R.drawable.ic_road_closed;
                             break;
                         case "Trafic ralenti":
-                             icon = R.drawable.ic_traffic_jam;
+                            icon = R.drawable.ic_traffic_jam;
                             break;
                         case "Travaux":
                             icon = R.drawable.ic_worksite;
@@ -167,13 +178,15 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
                             break;
                     }
                     mMap.addMarker(new MarkerOptions()
-                        .icon(BitmapFromVector(getApplicationContext(), icon))
-                        .position(incidentReceived.getPositiontoLatLng())
-                        .title(incidentReceived.getName())
-                        .snippet("Description : " + incidentReceived.getDescription() + "\n\n" + incidentReceived.getDate()));
+                            .icon(BitmapFromVector(getApplicationContext(), icon))
+                            .position(incident.getPositiontoLatLng())
+                            .title(incident.getName())
+                            .snippet("Description : " + incident.getDescription() + "\n\n" + incident.getDate()));
+                }
             }
         }
     }
+
 
 
     public void updatePosition() {
