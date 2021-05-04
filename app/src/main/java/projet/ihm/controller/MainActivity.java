@@ -69,6 +69,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     private Profile profile;
 
 
+
     // APPEL 18
     private static final int MY_PERMISSION_REQUEST_CODE_CALL_PHONE = 555;
     private static final String LOG_TAG = "AndroidExample";
@@ -120,6 +121,13 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         (findViewById(R.id.buttonCall)).setOnClickListener( click ->
             askPermissionAndCall()
         );
+
+
+        //Bouton Recentrer
+        (findViewById(R.id.Recentrer)).setOnClickListener( click ->
+                moveCamera()
+                );
+
 
     }
 

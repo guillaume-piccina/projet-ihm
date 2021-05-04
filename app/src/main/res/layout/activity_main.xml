@@ -50,15 +50,28 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent" />
 
+
+
     <Button
         android:id="@+id/buttonProfile"
         android:layout_width="73dp"
         android:layout_height="64dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="15dp"
         android:layout_marginRight="12dp"
         android:background="@drawable/parameters"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/Recentrer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recentrer"
+        app:layout_constraintLeft_toRightOf="@+id/buttonCall"
+        app:layout_constraintRight_toLeftOf="@+id/buttonProfile"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="15dp"
+        android:background="#590505"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
