@@ -20,12 +20,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -63,6 +59,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Location currentLocation;
     private GoogleMap mMap;
     private View fragmentInfoIncident;
+    private Marker marker;
 
     // APPEL 18
     private static final int MY_PERMISSION_REQUEST_CODE_CALL_PHONE = 555;
@@ -80,13 +77,26 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     currentLocation = new Location(""); //provider name is unnecessary
                     currentLocation.setLatitude((double) intent.getExtras().get("latitude"));
                     currentLocation.setLongitude((double) intent.getExtras().get("longitude"));
-                    mMap.addMarker(new MarkerOptions().position(getPosition()).title(currentLocation.getLatitude() + " " + currentLocation.getLongitude()));
+                    placeMarker(getPosition());
                     moveCamera();
                 }
             };
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
         }
     }
+
+    private void placeMarker(LatLng location) {
+        if ( marker != null ) {
+            marker.setPosition(location);
+        } else {
+            marker = mMap.addMarker(
+                    new MarkerOptions()
+                            .position(getPosition())
+                            .draggable(true)
+                            .title("votre localisation"));
+        }
+    }
+
 
     @Override
     protected void onDestroy(){
@@ -109,14 +119,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-/*
-        currentLocation = new Location(""); //provider name is unnecessary
-        currentLocation.setLatitude(10);
-        currentLocation.setLongitude(10);
-        mMap.addMarker(new MarkerOptions().position(getPosition()).title(currentLocation.getLatitude() + " " + currentLocation.getLongitude()));
-        moveCamera();
-*/
 
         // Demander la permission pour utiliser le GPS
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
