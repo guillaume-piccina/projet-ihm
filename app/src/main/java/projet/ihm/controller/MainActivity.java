@@ -96,12 +96,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     placeMarker(getPosition());
                     moveCamera();
                     showIncident();
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    int distanceNotif = Integer.parseInt(preferences.getString(DISTANCE, "50"));
-                    mMap.addCircle(new CircleOptions()
-                            .center(getPosition())
-                            .radius(distanceNotif)
-                            .strokeColor(Color.BLACK));
                 }
             };
 
@@ -221,9 +215,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         .position(incidentReceived.getPositiontoLatLng())
                         .title(incidentReceived.getType())
                         .snippet("Description : " + incidentReceived.getDescription() + "\n\n" + incidentReceived.getDate()));
+                sendIncidentNotification();
             }
-            sendIncidentNotification();
-
         }
     }
 
