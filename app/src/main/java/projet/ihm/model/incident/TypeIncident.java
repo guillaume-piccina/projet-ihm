@@ -7,7 +7,8 @@ public enum TypeIncident {
     TRAFFIC_JAM("Trafic ralenti"),
     WORKSITE("Travaux"),
     POLICE("Police"),
-    POTHOLE("Nid de poule");
+    POTHOLE("Nid de poule"),
+    OTHER("Autre");
 
     private final String name;
 

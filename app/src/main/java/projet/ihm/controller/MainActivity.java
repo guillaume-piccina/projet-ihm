@@ -96,6 +96,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     placeMarker(getPosition());
                     moveCamera();
                     showIncident();
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    int distanceNotif = Integer.parseInt(preferences.getString(DISTANCE, "50"));
+                    mMap.addCircle(new CircleOptions()
+                            .center(getPosition())
+                            .radius(distanceNotif)
+                            .strokeColor(Color.BLACK));
                 }
             };
 
@@ -172,6 +178,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 moveCamera()
         );
 
+
     }
 
     public void showIncident() {
@@ -228,7 +235,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Customiser les infos du marker
         if (mMap != null) {
-
 
             mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Override
@@ -395,10 +401,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     public void sendIncidentNotification() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         int distanceNotif = Integer.parseInt(preferences.getString(DISTANCE, "50"));
-        mMap.addCircle(new CircleOptions()
-                .center(getPosition())
-                .radius(distanceNotif)
-                .strokeColor(Color.BLACK));
 
         Location incidentLocation = new Location("");
         incidentLocation.setLatitude((double) incident.getPosition().getLatitude());
