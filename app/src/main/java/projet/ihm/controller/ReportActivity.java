@@ -150,6 +150,13 @@ public class ReportActivity extends AppCompatActivity {
                     // Envoyer l'objet Incident à MainActivity
                     Intent intentSend = new Intent(getApplicationContext(), MainActivity.class);
                     intentSend.putExtra(INCIDENT, incident);
+
+                    //Toast de validation
+
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                                            "Votre signalement du type : " + incident.getName() + ", pour " +incident.getCommunity().toString() +" a été effectué",
+                                            Toast.LENGTH_LONG);
+                    toast.show();
                     startActivity(intentSend);
 
                 } catch (Throwable throwable) {
