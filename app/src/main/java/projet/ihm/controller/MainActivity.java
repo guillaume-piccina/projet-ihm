@@ -53,6 +53,8 @@ import projet.ihm.model.incident.Incident;
 
 import static projet.ihm.controller.ParametersActivity.COMMUNITY;
 import static projet.ihm.controller.ParametersActivity.DISTANCE;
+import static projet.ihm.model.Application.LATITUDE;
+import static projet.ihm.model.Application.LONGITUDE;
 import static projet.ihm.model.incident.Incident.INCIDENT;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -80,8 +82,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     currentLocation.setLongitude((double) intent.getExtras().get("longitude"));
                     placeMarker(getPosition());
                     moveCamera();
+                    showIncident();
+
                 }
             };
+
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
             if (mMap != null)
                 showIncident();
@@ -136,6 +141,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         // bouton signaler
         (findViewById(R.id.buttonReport)).setOnClickListener( click -> {
             Intent intentSend = new Intent( getApplicationContext(), ReportActivity.class);
+            intentSend.putExtra(LONGITUDE, currentLocation.getLongitude());
+            intentSend.putExtra(LATITUDE, currentLocation.getLatitude());
             startActivity(intentSend);
         });
 
