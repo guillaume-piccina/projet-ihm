@@ -39,7 +39,7 @@ public class ReportActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
-        Position position = new Position(getIntent().getDoubleExtra(LONGITUDE,0),getIntent().getDoubleExtra(LATITUDE,0));
+        Position position = new Position(getIntent().getDoubleExtra(LONGITUDE,0), getIntent().getDoubleExtra(LATITUDE,0));
 
 
         // Sélection type incident

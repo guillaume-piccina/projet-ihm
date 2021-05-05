@@ -71,7 +71,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private View fragmentInfoIncident;
     private Marker marker;
     private Incident incident;
-    private Incident demoIncident  ;
+    private Incident demoIncident= new Incident(TypeIncident.ACCIDENT, Community.EVERYBODY, "", new Position(5.3744, 43.2949));
 
 
     // Notification
@@ -96,12 +96,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     currentLocation.setLatitude((double) intent.getExtras().get("latitude"));
                     currentLocation.setLongitude((double) intent.getExtras().get("longitude"));
                     placeMarker(getPosition());
-                    moveCamera();
                     showIncident();
-
+                    sendDemoNotification();
                 }
             };
-
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
         }
     }
@@ -139,7 +137,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        demoIncident= new Incident(TypeIncident.ACCIDENT, Community.EVERYBODY, "", new Position(43.2949, 5.3744));
+
         Intent intent = new Intent(getApplicationContext(), MapService.class);
         startService(intent);
 
@@ -239,7 +237,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Customiser les infos du marker
         if (mMap != null) {
-
             mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Override
                 public View getInfoWindow(Marker marker) {
