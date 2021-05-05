@@ -56,6 +56,7 @@ import projet.ihm.R;
 import projet.ihm.model.Community;
 import projet.ihm.model.Position;
 import projet.ihm.model.incident.Incident;
+import projet.ihm.model.incident.TypeIncident;
 
 import static projet.ihm.controller.ParametersActivity.COMMUNITY;
 import static projet.ihm.controller.ParametersActivity.DISTANCE;
@@ -70,6 +71,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private View fragmentInfoIncident;
     private Marker marker;
     private Incident incident;
+    private Incident demoIncident  ;
 
 
     // Notification
@@ -96,11 +98,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     placeMarker(getPosition());
                     moveCamera();
                     showIncident();
+
                 }
             };
 
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
-
         }
     }
 
@@ -113,6 +115,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                             .position(getPosition())
                             .draggable(true)
                             .title("Vous"));
+
+
+            mMap.addMarker(new MarkerOptions()
+                    .icon(BitmapFromVector(getApplicationContext(), R.drawable.ic_accident))
+                    .position(new LatLng(43.2949, 5.3744))
+                    .title(TypeIncident.ACCIDENT.toString())
+                    .snippet("Description : Pas de description\n\n  Date : 05/05/2021 14:10:52"));
         }
     }
 
@@ -130,7 +139,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        demoIncident= new Incident(TypeIncident.ACCIDENT, Community.EVERYBODY, "", new Position(43.2949, 5.3744));
         Intent intent = new Intent(getApplicationContext(), MapService.class);
         startService(intent);
 
@@ -171,6 +180,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         (findViewById(R.id.Recentrer)).setOnClickListener( click ->
                 moveCamera()
         );
+
+
 
 
     }
@@ -399,10 +410,26 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         incidentLocation.setLatitude((double) incident.getPosition().getLatitude());
         incidentLocation.setLongitude((double) incident.getPosition().getLongitude());
         float distance = currentLocation.distanceTo(incidentLocation);
-        System.out.println(distance);
+
         if (distance <= distanceNotif && !incident.isSend()) {
             sendNotification("Incident de type " + incident.getType() + " à moins de " + distanceNotif + " m de votre position");
             incident.send();
+        }
+
+    }
+
+    public void sendDemoNotification(){
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        int distanceNotif = Integer.parseInt(preferences.getString(DISTANCE, "50"));
+
+        Location demoIncidentLocation = new Location("");
+        demoIncidentLocation.setLatitude((double) demoIncident.getPosition().getLatitude());
+        demoIncidentLocation.setLongitude((double) demoIncident.getPosition().getLongitude());
+        float demoDistance = currentLocation.distanceTo(demoIncidentLocation);
+
+        if (demoDistance <= distanceNotif && !demoIncident.isSend()) {
+            sendNotification("Incident de type " + demoIncident.getType() + " à moins de " + distanceNotif + " m de votre position");
+            demoIncident.send();
         }
     }
 
