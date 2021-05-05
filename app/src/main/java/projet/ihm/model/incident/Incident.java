@@ -20,6 +20,7 @@ public class Incident implements Parcelable {
     protected int numberLikes;
     protected boolean relief;
     protected Position position;
+    protected boolean send;
 
     public Incident(TypeIncident type, Community community, String description, Position position) {
         this.type = type.getName();
@@ -29,6 +30,7 @@ public class Incident implements Parcelable {
         this.numberLikes = 0;
         this.relief = false;
         this.position=position;
+        this.send = false;
     }
 
 
@@ -39,6 +41,7 @@ public class Incident implements Parcelable {
         community = Community.values()[in.readInt()];
         numberLikes = in.readInt();
         relief = in.readByte() != 0;
+        send = in.readByte() != 0;
         position = in.readParcelable(Position.class.getClassLoader());
     }
 
@@ -67,6 +70,10 @@ public class Incident implements Parcelable {
     }
 
     public boolean getRelief() { return this.relief; }
+
+    public void send() { this.send = true; }
+
+    public boolean isSend() { return this.send; }
 
     public String getDescription() {
         return description;
@@ -108,6 +115,7 @@ public class Incident implements Parcelable {
         dest.writeInt(community.ordinal());
         dest.writeInt(numberLikes);
         dest.writeByte((byte) (relief ? 1 : 0));
+        dest.writeByte((byte) (send ? 1 : 0));
         dest.writeParcelable(position, flags);
     }
 }

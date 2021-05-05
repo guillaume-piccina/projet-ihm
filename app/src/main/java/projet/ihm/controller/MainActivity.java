@@ -4,10 +4,14 @@ package projet.ihm.controller;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -20,6 +24,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -45,9 +50,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import projet.ihm.R;
 import projet.ihm.model.Community;
+import projet.ihm.model.Position;
 import projet.ihm.model.incident.Incident;
 
 import static projet.ihm.controller.ParametersActivity.COMMUNITY;
@@ -62,6 +69,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private View fragmentInfoIncident;
     private Marker marker;
+    private Incident incident;
+
+
+    // Notification
+    private int notificationId = 0;
+    public static final String CHANNEL_ID = "channel";
+    private static NotificationManager notificationManager;
 
     // APPEL 18
     private static final int MY_PERMISSION_REQUEST_CODE_CALL_PHONE = 555;
@@ -82,13 +96,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     placeMarker(getPosition());
                     moveCamera();
                     showIncident();
-
                 }
             };
 
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
-            if (mMap != null)
-                showIncident();
+
         }
     }
 
@@ -121,6 +133,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         Intent intent = new Intent(getApplicationContext(), MapService.class);
         startService(intent);
+
+        // Notification
+        NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "channel", NotificationManager.IMPORTANCE_HIGH);
+        channel.setDescription("Channel pour l'application incident de la route.");
+        notificationManager = getSystemService(NotificationManager.class);
+        Objects.requireNonNull(notificationManager).createNotificationChannel(channel);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -161,6 +179,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
 
         if (incidentReceived != null) {
+            incident = incidentReceived;
             String community = preferences.getString(COMMUNITY, "Tout le monde");
             if (community.equals(incidentReceived.getCommunity().toString()) || community.equals(Community.EVERYBODY.toString()) || incidentReceived.getCommunity().toString().equals(Community.EVERYBODY.toString())) {
                 int icon;
@@ -196,6 +215,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                         .title(incidentReceived.getType())
                         .snippet("Description : " + incidentReceived.getDescription() + "\n\n" + incidentReceived.getDate()));
             }
+            sendIncidentNotification();
+
         }
     }
 
@@ -207,6 +228,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         // Customiser les infos du marker
         if (mMap != null) {
+
 
             mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
                 @Override
@@ -372,12 +394,30 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     // Envoie une notification quand un incident est dans la zone
     public void sendIncidentNotification() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int distance = Integer.parseInt(preferences.getString(DISTANCE, "50"));
+        int distanceNotif = Integer.parseInt(preferences.getString(DISTANCE, "50"));
         mMap.addCircle(new CircleOptions()
                 .center(getPosition())
-                .radius(distance)
+                .radius(distanceNotif)
                 .strokeColor(Color.BLACK));
 
+        Location incidentLocation = new Location("");
+        incidentLocation.setLatitude((double) incident.getPosition().getLatitude());
+        incidentLocation.setLongitude((double) incident.getPosition().getLongitude());
+        float distance = currentLocation.distanceTo(incidentLocation);
+        System.out.println(distance);
+        if (distance <= distanceNotif && !incident.isSend()) {
+            sendNotification("Incident de type " + incident.getType() + " à moins de " + distanceNotif + " m de votre position");
+            incident.send();
+        }
+    }
+
+    private void sendNotification(String message) {
+        NotificationCompat.Builder notification = new NotificationCompat.Builder(getApplicationContext(), CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setContentTitle("Incident proche de vous !")
+                .setContentText(message)
+                .setPriority(NotificationManager.IMPORTANCE_HIGH);
+        NotificationManagerCompat.from(this).notify(++notificationId, notification.build());
     }
 
 }
