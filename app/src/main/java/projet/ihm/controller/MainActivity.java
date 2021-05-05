@@ -112,7 +112,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     new MarkerOptions()
                             .position(getPosition())
                             .draggable(true)
-                            .title("votre localisation"));
+                            .title("Vous"));
         }
     }
 
