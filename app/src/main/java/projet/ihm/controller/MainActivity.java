@@ -8,9 +8,11 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,6 +23,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
@@ -46,30 +49,52 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import projet.ihm.R;
-import projet.ihm.model.Community;
 import projet.ihm.model.incident.Incident;
 
 import static projet.ihm.controller.ParametersActivity.COMMUNITY;
 import static projet.ihm.controller.ParametersActivity.DISTANCE;
-import static projet.ihm.model.Application.LATITUDE;
-import static projet.ihm.model.Application.LONGITUDE;
-import static projet.ihm.model.Application.PROFILE;
 import static projet.ihm.model.incident.Incident.INCIDENT;
 
-public class MainActivity extends FragmentActivity implements IGPSActivity, OnMapReadyCallback {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private static final String TAG = "GPS";
     private Location currentLocation;
     private GoogleMap mMap;
     private View fragmentInfoIncident;
 
-
     // APPEL 18
     private static final int MY_PERMISSION_REQUEST_CODE_CALL_PHONE = 555;
     private static final String LOG_TAG = "AndroidExample";
+
+    private BroadcastReceiver broadcastReceiver;
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+        if (broadcastReceiver == null){
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    currentLocation = new Location(""); //provider name is unnecessary
+                    currentLocation.setLatitude((double) intent.getExtras().get("latitude"));
+                    currentLocation.setLongitude((double) intent.getExtras().get("longitude"));
+                    mMap.addMarker(new MarkerOptions().position(getPosition()).title(currentLocation.getLatitude() + " " + currentLocation.getLongitude()));
+                    moveCamera();
+                }
+            };
+            registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
+        }
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        if (broadcastReceiver != null){
+            unregisterReceiver(broadcastReceiver);
+        }
+    }
 
 
     @Override
@@ -77,7 +102,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(MainActivity.this, MapService.class);
+        Intent intent = new Intent(getApplicationContext(), MapService.class);
         startService(intent);
 
 
@@ -85,9 +110,17 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+/*
+        currentLocation = new Location(""); //provider name is unnecessary
+        currentLocation.setLatitude(10);
+        currentLocation.setLongitude(10);
+        mMap.addMarker(new MarkerOptions().position(getPosition()).title(currentLocation.getLatitude() + " " + currentLocation.getLongitude()));
+        moveCamera();
+*/
+
         // Demander la permission pour utiliser le GPS
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
 
         // bouton profile
@@ -115,7 +148,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         saveIncidentReceived();
     }
 
-
     public void saveIncidentReceived() {
         Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
         if (incidentReceived != null) {
@@ -130,9 +162,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             }
         }
     }
-
-
-
 
     // Placer tous les markers des incidents sur la map
     public void showAllIncidents()  {
@@ -188,47 +217,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     }
 
 
-
-    public void updatePosition() {
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            LocationListener listener = new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
-                    currentLocation = location;
-                    // Marker de la localisation actuelle
-
-                    mMap.addMarker(new MarkerOptions().position(getPosition()).title("Votre localisation"));
-
-                    moveCamera();
-
-                    sendIncidentNotification();
-                }
-
-                @Override
-                public void onStatusChanged(String s, int i, Bundle bundle) {
-                    Log.d(TAG, "satus changed=" + s);
-                }
-
-                @Override
-                public void onProviderEnabled(String s) {
-                    Log.d(TAG, s + " sensor ON");
-                }
-
-                @Override
-                public void onProviderDisabled(String s) {
-                    Log.d(TAG, s + " sensor OFF");
-                }
-            };
-            LocationManager locationManager = (LocationManager) (this.getSystemService(LOCATION_SERVICE));
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1, listener);
-
-        } else {
-            //GPS permission is still not GRANTED
-            Log.d(TAG, "Permission NOT GRANTED  ! ");
-        }
-    }
-
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -242,8 +230,6 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Met à jour la position et ajoute le nouvel incident
-        updatePosition();
 
         // Customiser les infos du marker
         if (mMap != null) {
@@ -269,10 +255,8 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             });
 
         }
-
     }
 
-    @Override
     public void moveCamera() {
         // Zoom animé
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(getPosition(),15));
@@ -290,7 +274,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
         Log.d( TAG, "requestCode=" + requestCode );
 
         switch (requestCode) {
-            case REQUEST_CODE: {  //GPS FINE LOCATION only autorisation result code
+            case 1: {  //GPS FINE LOCATION only autorisation result code
                 if( grantResults.length > 0 &&  grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Toast toast = Toast.makeText(getApplicationContext(), "Permission de localisation activé.", Toast.LENGTH_LONG);
                     toast.show();
@@ -333,6 +317,7 @@ public class MainActivity extends FragmentActivity implements IGPSActivity, OnMa
             }
         }
     }
+
 
     // Pour les icons sur la map des incidents
     private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
