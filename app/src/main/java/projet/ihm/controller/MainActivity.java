@@ -21,7 +21,6 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -61,6 +60,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private Location currentLocation;
     private GoogleMap mMap;
     private View fragmentInfoIncident;
+    private Marker marker;
 
     // APPEL 18
     private static final int MY_PERMISSION_REQUEST_CODE_CALL_PHONE = 555;
@@ -78,7 +78,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     currentLocation = new Location(""); //provider name is unnecessary
                     currentLocation.setLatitude((double) intent.getExtras().get("latitude"));
                     currentLocation.setLongitude((double) intent.getExtras().get("longitude"));
-                    mMap.addMarker(new MarkerOptions().position(getPosition()).title(currentLocation.getLatitude() + " " + currentLocation.getLongitude()));
+                    placeMarker(getPosition());
                     moveCamera();
                 }
             };
@@ -87,6 +87,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 showIncident();
         }
     }
+
+    private void placeMarker(LatLng location) {
+        if ( marker != null ) {
+            marker.setPosition(location);
+        } else {
+            marker = mMap.addMarker(
+                    new MarkerOptions()
+                            .position(getPosition())
+                            .draggable(true)
+                            .title("votre localisation"));
+        }
+    }
+
 
     @Override
     protected void onDestroy(){
