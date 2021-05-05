@@ -126,6 +126,9 @@ public class ReportActivity extends AppCompatActivity {
                 case "Travaux":
                     typeIncidentChecked = TypeIncident.WORKSITE;
                     break;
+                case "Autre":
+                    typeIncidentChecked = TypeIncident.OTHER;
+                    break;
                 default:
                     typeIncidentChecked = null;
                     break;
