@@ -154,7 +154,7 @@ public class ReportActivity extends AppCompatActivity {
                     //Toast de validation
 
                     Toast toast = Toast.makeText(getApplicationContext(),
-                                            "Votre signalement du type : " + incident.getName() + ", pour " +incident.getCommunity().toString() +" a été effectué",
+                                            "Votre signalement du type : " + incident.getType() + ", pour " +incident.getCommunity().toString() +" a été effectué",
                                             Toast.LENGTH_LONG);
                     toast.show();
                     startActivity(intentSend);

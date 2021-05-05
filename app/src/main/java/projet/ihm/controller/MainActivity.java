@@ -20,19 +20,14 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,11 +42,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import projet.ihm.R;
+import projet.ihm.model.Community;
 import projet.ihm.model.incident.Incident;
 
 import static projet.ihm.controller.ParametersActivity.COMMUNITY;
@@ -85,6 +83,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             };
             registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
+            if (mMap != null)
+                showIncident();
         }
     }
 
@@ -105,18 +105,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         Intent intent = new Intent(getApplicationContext(), MapService.class);
         startService(intent);
 
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-/*
-        currentLocation = new Location(""); //provider name is unnecessary
-        currentLocation.setLatitude(10);
-        currentLocation.setLongitude(10);
-        mMap.addMarker(new MarkerOptions().position(getPosition()).title(currentLocation.getLatitude() + " " + currentLocation.getLongitude()));
-        moveCamera();
-*/
 
         // Demander la permission pour utiliser le GPS
         if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -144,88 +135,52 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 moveCamera()
         );
 
-
-        saveIncidentReceived();
     }
 
-    public void saveIncidentReceived() {
-        Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
-        if (incidentReceived != null) {
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                //FileOutputStream fos = new FileOutputStream(new File("incidents"));
-                mapper.writeValue(new File("c:\\test\\staff.json"), incidentReceived);
-                System.out.println("---------------------------------------------------file created ");
-                System.out.println(System.getProperty("user.dir"));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    // Placer tous les markers des incidents sur la map
-    public void showAllIncidents()  {
+    public void showIncident() {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Incident incidentReceived = getIntent().getParcelableExtra(INCIDENT);
 
-        ObjectMapper mapper = new ObjectMapper();
-        TypeReference<List<Incident>> typeReference = new TypeReference<List<Incident>>() {};
-        Incident[] incidents = null;
-        try {
-            FileOutputStream fos = new FileOutputStream(new File(getFilesDir(), "incidents"));
-            incidents = mapper.readValue(String.valueOf(fos), Incident[].class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (incidents != null) {
-            for (Incident incident : incidents) {
-                if (preferences.getString(COMMUNITY, "Tout le monde").equals(incident.getCommunity().toString())) {
-                    int icon;
-                    switch (incident.getType()) {
-                        case "Accident":
-                            icon = R.drawable.ic_accident;
-                            break;
-                        case "Danger":
-                            icon = R.drawable.ic_danger;
-                            break;
-                        case "Route fermée":
-                            icon = R.drawable.ic_road_closed;
-                            break;
-                        case "Trafic ralenti":
-                            icon = R.drawable.ic_traffic_jam;
-                            break;
-                        case "Travaux":
-                            icon = R.drawable.ic_worksite;
-                            break;
-                        case "Police":
-                            icon = R.drawable.ic_police;
-                            break;
-                        case "Nid de poule":
-                            icon = R.drawable.ic_pothole;
-                            break;
-                        default:
-                            icon = R.drawable.ic_others;
-                            break;
-                    }
-                    mMap.addMarker(new MarkerOptions()
-                            .icon(BitmapFromVector(getApplicationContext(), icon))
-                            .position(incident.getPositiontoLatLng())
-                            .title(incident.getName())
-                            .snippet("Description : " + incident.getDescription() + "\n\n" + incident.getDate()));
+        if (incidentReceived != null) {
+            String community = preferences.getString(COMMUNITY, "Tout le monde");
+            if (community.equals(incidentReceived.getCommunity().toString()) || community.equals(Community.EVERYBODY.toString()) || incidentReceived.getCommunity().toString().equals(Community.EVERYBODY.toString())) {
+                int icon;
+                switch (incidentReceived.getType()) {
+                    case "Accident":
+                        icon = R.drawable.ic_accident;
+                        break;
+                    case "Danger":
+                        icon = R.drawable.ic_danger;
+                        break;
+                    case "Route fermée":
+                        icon = R.drawable.ic_road_closed;
+                        break;
+                    case "Trafic ralenti":
+                        icon = R.drawable.ic_traffic_jam;
+                        break;
+                    case "Travaux":
+                        icon = R.drawable.ic_worksite;
+                        break;
+                    case "Police":
+                        icon = R.drawable.ic_police;
+                        break;
+                    case "Nid de poule":
+                        icon = R.drawable.ic_pothole;
+                        break;
+                    default:
+                        icon = R.drawable.ic_others;
+                        break;
                 }
+                mMap.addMarker(new MarkerOptions()
+                        .icon(BitmapFromVector(getApplicationContext(), icon))
+                        .position(incidentReceived.getPositiontoLatLng())
+                        .title(incidentReceived.getType())
+                        .snippet("Description : " + incidentReceived.getDescription() + "\n\n" + incidentReceived.getDate()));
             }
         }
     }
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
